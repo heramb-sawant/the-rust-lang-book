@@ -3,81 +3,64 @@
 // Print things to go in spirals?
 // Take in user input to switch spiral direction?
 
-#[derive(Debug)]
-enum Direction {
-    Left,
-    Right,
-}
+/*
+- Grid should have an array of elements
+- Each element has a position and "thing".
+- Thing should have symbol and etc..
+-
+*/
+use std::{fmt, thread, time};
 
-#[derive(Debug)]
-struct Bullet {
-    char: String,
-    position: u32,
-    direction: Direction,
+#[derive(Clone, Copy)]
+enum Tile {
+    Player,
+    Ground,
+    Diamond,
+}
+impl fmt::Display for Tile {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Tile::Player => write!(f, "P"),
+            Tile::Ground => write!(f, "."),
+            Tile::Diamond => write!(f, "D"),
+        }
+    }
 }
 
 struct Grid {
-    space_char: String,
-    length: u32,
+    tiles: [[Tile; 10]; 10],
+    height: i32,
+    width: i32,
 }
 
-fn build_grid(length: u32) -> Grid {
-    let grid = Grid {
-        length,
-        space_char: String::from(' '),
-    };
+impl Grid {
+    fn new() -> Self {
+        let mut grid = Grid {
+            tiles: [[Tile::Ground; 10]; 10],
+            height: 10,
+            width: 10,
+        };
 
-    grid
-}
+        grid.tiles[0][0] = Tile::Player;
+        grid.tiles[9][9] = Tile::Diamond;
 
-fn build_bullet() -> Bullet {
-    let grid = Bullet {
-        char: String::from('O'),
-        position: 0,
-        direction: Direction::Right,
-    };
-
-    grid
-}
-
-fn print_line(grid: &Grid, bullet: &Bullet) {
-    let mut line = String::new();
-    let mut i = 0;
-
-    while i < grid.length {
-        if i == bullet.position {
-            line.push_str(&bullet.char);
-        } else if i == 0 {
-            line.push_str("|");
-        } else if i == grid.length - 1 {
-            line.push_str("|");
-        } else {
-            line.push_str(&grid.space_char);
-        }
-
-        i += 1;
+        grid
     }
 
-    println!("{}", line);
-}
+    fn move_player(&mut self, width: usize, height: usize) {
+        self.tiles[width][height] = Tile::Player;
+    }
 
-fn update_grid(grid: &Grid, bullet: &mut Bullet) {
-    match bullet.direction {
-        Direction::Left => {
-            if bullet.position == 0 {
-                bullet.direction = Direction::Right;
-                bullet.position += 1;
-            } else {
-                bullet.position -= 1;
+    fn get(&self, width: usize, height: usize) -> Tile {
+        self.tiles[width][height]
+    }
+
+    fn display(&self) {
+        for width in &self.tiles {
+            for tile in width {
+                print!("{} ", tile);
             }
-        }
-        Direction::Right => {
-            if bullet.position == &grid.length - 1 {
-                bullet.direction = Direction::Left;
-                bullet.position -= 1;
-            } else {
-                bullet.position += 1;
-            }
+            println!("");
         }
     }
 }
@@ -85,13 +68,16 @@ fn update_grid(grid: &Grid, bullet: &mut Bullet) {
 fn start() {
     println!("Starting Application!");
 
-    let grid: Grid = build_grid(100);
-    let mut bullet: Bullet = build_bullet();
+    let grid: Grid = Grid::new();
 
-    loop {
-        update_grid(&grid, &mut bullet);
-        print_line(&grid, &bullet);
-    }
+    grid.display();
+    // let mut bullet: Bullet = build_bullet();
+
+    // loop {
+    //     wait();
+    //     update_grid(&grid, &mut bullet);
+    //     print_line(&grid, &bullet);
+    // }
 }
 
 fn main() {

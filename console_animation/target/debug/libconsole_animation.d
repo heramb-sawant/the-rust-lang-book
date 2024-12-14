@@ -1,0 +1,1 @@
+/Users/herambsawant/Documents/Projects/the-rust-lang-book/console_animation/target/debug/libconsole_animation.rlib: /Users/herambsawant/Documents/Projects/the-rust-lang-book/console_animation/src/lib.rs
